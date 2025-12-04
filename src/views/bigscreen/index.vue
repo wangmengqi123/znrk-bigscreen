@@ -1,12 +1,12 @@
 <template>
   <div class="bigscreen-container">
-    <!-- 顶部标题 (模拟) -->
     <div class="bigscreen-header">
-      <div class="header-title">{{ $t("common.projectName") }}</div>
-      <div class="header-info">
+      <div class="time">{{ time }}</div>
+      <div class="project-name">{{ $t("common.projectName") }}</div>
+      <div class="enter-admin-btn">
         <el-button
+          icon="el-icon-setting"
           class="enter-admin-btn"
-          type="primary"
           @click="$router.push('/home')"
           >{{ $t("bigScreen.enterAdmin") }}</el-button
         >
@@ -37,15 +37,14 @@
       <!-- 右侧栏 -->
       <div class="column right-col">
         <!-- 告警统计 -->
-        <alarm-panel />
+        <!-- <alarm-panel /> -->
 
         <!-- 实时事件 -->
-        <events-panel />
+        <!-- <events-panel /> -->
       </div>
     </div>
   </div>
 </template>
-
 <script>
 import ScalePanel from "./components/ScalePanel";
 import AnalysisPanel from "./components/AnalysisPanel";
@@ -54,7 +53,6 @@ import ElectricityPanel from "./components/ElectricityPanel";
 import AlarmPanel from "./components/AlarmPanel";
 import EventsPanel from "./components/EventsPanel";
 import { getStationData } from "@/api/bigscreen";
-
 export default {
   name: "BigScreen",
   components: {
@@ -67,72 +65,151 @@ export default {
   },
   data() {
     return {
-      resizeTimer: null,
+      time: "",
     };
   },
   mounted() {
-    window.addEventListener("resize", this.handleResize);
-    this.getStationData();
-  },
-  beforeDestroy() {
-    window.removeEventListener("resize", this.handleResize);
-    if (this.resizeTimer) {
-      clearTimeout(this.resizeTimer);
-    }
+    this.getTime();
   },
   methods: {
-    // 防抖处理 resize 事件
-    handleResize() {
-      if (this.resizeTimer) {
-        clearTimeout(this.resizeTimer);
-      }
-    },
-    async getStationData() {
-      const res = await getStationData();
-      console.log(res, "res");
+    getTime() {
+      this.time = new Date().toLocaleString();
     },
   },
 };
 </script>
-
 <style lang="scss" scoped>
 .bigscreen-container {
-  height: 100vh;
-  min-height: 100vh;
-  background-color: #050e26;
-  color: #fff;
-  padding: 10px;
-  box-sizing: border-box;
+  font-family: "Exo 2", sans-serif;
+  background: #060922;
   overflow: hidden;
-  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
-    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-
+  position: relative;
+  user-select: none;
+  width: 100vw;
+  height: 100vh;
+  padding: 20px;
+  /* 网格背景 */
+  background-image: linear-gradient(rgba(0, 245, 212, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 245, 212, 0.1) 1px, transparent 1px);
+  background-size: 30px 30px;
   .bigscreen-header {
+    height: 80px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 0 10px;
-    height: 50px;
-    margin-bottom: 10px;
+    background: rgba(15, 25, 70, 0.85);
+    border-radius: 10px;
+    padding: 0 30px;
+    margin-bottom: 15px;
     position: relative;
-
-    .header-title {
-      font-size: 1.55rem;
+    overflow: hidden;
+    z-index: 10;
+    border: 1px solid rgba(0, 245, 212, 0.2);
+    box-shadow: 0 0 20px rgba(0, 245, 212, 0.1);
+    .time {
+      flex: 1;
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: #94f0f8;
+      letter-spacing: 1px;
+    }
+    .project-name {
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
-      font-weight: bold;
-      color: #00eaff;
+      font-size: 2.2rem;
+      font-weight: 700;
+      font-family: "Orbitron", sans-serif;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #77a0ff, #00f5d4, #9b5de5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px rgba(155, 93, 229, 0.5);
+      animation: titleGlow 2s infinite alternate;
+      @keyframes titleGlow {
+        0% {
+          text-shadow: 0 0 20px rgba(155, 93, 229, 0.5);
+        }
+        100% {
+          text-shadow: 0 0 40px rgba(0, 245, 212, 0.8),
+            0 0 60px rgba(155, 93, 229, 0.7);
+        }
+      }
+    }
+    .enter-admin-btn {
+      border: none;
+      background: linear-gradient(90deg, #00f5d4, #9b5de5);
+      color: #0c2952;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 20px #00f5d4;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      font-family: "Orbitron", sans-serif;
+      letter-spacing: 1px;
+    }
+    .enter-admin-btn::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.3),
+        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0.3)
+      );
+      animation: btnScan 3s infinite;
+      z-index: 2;
+    }
+
+    @keyframes btnScan {
+      0% {
+        transform: translateX(-100%);
+      }
+      100% {
+        transform: translateX(100%);
+      }
+    }
+
+    .admin-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px var(--primary-neon), 0 0 50px rgba(155, 93, 229, 0.5);
     }
   }
-
+  .bigscreen-header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(0, 245, 212, 0.1),
+      transparent
+    );
+    animation: headerScan 4s linear infinite;
+  }
+  @keyframes headerScan {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
   .main-content {
     display: flex;
-    height: calc(100% - 50px);
+    height: calc(100% - 100px);
     gap: 20px; // 增加整体列间距
-    background: url("~@/assets/bigscreen/big-screen.png") no-repeat center
-      center;
-    background-size: 100% 100%;
     .column {
       display: flex;
       flex-direction: column;
@@ -148,20 +225,6 @@ export default {
     }
     .right-col {
       flex: 2.5;
-    }
-  }
-
-  .enter-admin-btn {
-    background: rgba(36, 129, 227, 0.3);
-    border-color: #2481e3;
-    color: #fff;
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-
-    &:hover {
-      background: rgba(36, 129, 227, 0.8);
     }
   }
 }

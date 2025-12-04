@@ -1,27 +1,33 @@
 <template>
   <div class="panel analysis-panel">
-    <dv-border-box-13>
-      <div class="panel-content">
-        <div class="panel-title">{{ $t("bigScreen.analysisPanel.title") }}</div>
-        <dv-decoration-10 style="width: 98%; height: 5px" />
+    <div class="panel-content">
+      <CommonHeader
+        :title="$t('bigScreen.analysisPanel.title')"
+        rightIcon="fenxi"
+      />
 
-        <div class="analysis-header">
-          <div class="analysis-value">873.75</div>
-          <div class="analysis-label">
-            {{ $t("bigScreen.analysisPanel.totalRevenue") }}
-          </div>
+      <div class="analysis-header">
+        <div class="analysis-label">
+          {{ $t("bigScreen.analysisPanel.totalRevenue") }}
         </div>
-        <div ref="chart" class="chart-container"></div>
+        <div class="analysis-value">
+          873.75 <span>{{ $t("bigScreen.analysisPanel.unit") }}</span>
+        </div>
       </div>
-    </dv-border-box-13>
+      <div ref="chart" class="chart-container"></div>
+    </div>
   </div>
 </template>
 
 <script>
+import CommonHeader from "./CommonHeader.vue";
 import echarts from "echarts";
 
 export default {
   name: "AnalysisPanel",
+  components: {
+    CommonHeader,
+  },
   data() {
     return {
       chart: null,
@@ -74,7 +80,7 @@ export default {
         tooltip: {
           trigger: "axis",
         },
-        grid: { top: 30, bottom: 20, left: 40, right: 10 },
+        grid: { top: 60, bottom: 20, left: 50, right: 10 },
         xAxis: {
           type: "category",
           data: this.months,
@@ -125,11 +131,14 @@ export default {
 <style lang="scss" scoped>
 .analysis-panel {
   flex: 1;
+  min-height: 0; // 修复 flex 子元素溢出问题
   display: flex;
   flex-direction: column;
-
   position: relative;
   padding: 0;
+  background: rgba(8, 14, 44, 0.75);
+  border: 1px solid rgba(0, 245, 212, 0.2);
+  border-radius: 10px;
 
   ::v-deep .border-box-content {
     padding: 15px;
@@ -145,7 +154,7 @@ export default {
   }
 
   .panel-title {
-    font-size: 1.25rem; // 20px / 16px
+    font-size: 1.25rem;
     font-weight: 800;
     color: #fff;
     padding-left: 10px;
@@ -153,18 +162,24 @@ export default {
   }
 
   .analysis-header {
-    padding-top: 30px;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    padding-top: 20px;
+    padding-left: 20px;
+    text-align: left;
     margin-bottom: 10px;
     .analysis-value {
-      font-size: 2.25rem; // 36px / 16px
+      font-size: 2rem;
       color: #ffd700;
       font-weight: bold;
+      span {
+        font-size: 1rem;
+      }
     }
     .analysis-label {
-      font-size: 1rem; // 16px / 16px
-      color: #fff;
-      margin-top: 10px;
+      font-size: 1rem;
+      color: #a0c4e8;
+      margin: 0 10px;
     }
   }
   .chart-container {

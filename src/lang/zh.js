@@ -78,7 +78,7 @@ export default {
     },
     analysisPanel: {
       title: "运营分析",
-      totalRevenue: "运营至今累计总收益(万元)",
+      totalRevenue: "运营至今累计总收益",
       unit: "(万元)",
     },
     electricityPanel: {

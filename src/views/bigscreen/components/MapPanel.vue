@@ -1,16 +1,21 @@
 <template>
   <div class="map-container">
+    <CommonHeader :title="$t('bigScreen.mapPanel.title')" rightIcon="map" />
     <div ref="chart" class="chart-full"></div>
   </div>
 </template>
 
 <script>
+import CommonHeader from "./CommonHeader.vue";
 import echarts from "echarts";
 import "echarts/map/js/china"; // 引入中国地图数据
 import chinaData from "../china.json"; // 导入行政区划数据
 
 export default {
   name: "MapPanel",
+  components: {
+    CommonHeader,
+  },
   data() {
     return {
       chart: null,
@@ -245,6 +250,9 @@ export default {
   background: rgba(13, 31, 66, 0.3);
   border: 1px solid #1c4980;
   position: relative;
+  background: rgba(8, 14, 44, 0.75);
+  border: 1px solid rgba(0, 245, 212, 0.2);
+  border-radius: 10px;
   .chart-full {
     width: 100%;
     height: 100%;

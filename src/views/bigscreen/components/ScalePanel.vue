@@ -6,7 +6,7 @@
     ></CommonHeader>
     <div class="panel-content">
       <div class="days">
-        <div class="days-item1">安全运行天数</div>
+        <div class="days-item1">{{ $t("bigScreen.scalePanel.safeDays") }}</div>
         <div class="days-item2">456</div>
         <div class="days-item3">天</div>
       </div>
@@ -73,13 +73,13 @@ export default {
     display: flex;
     flex-direction: column;
     padding: 20px;
+    padding-top: 10px;
     font-size: 16px;
     color: #fff;
     .days {
       flex: 0 0 auto;
       display: flex;
       flex-direction: column;
-      // min-height: 120px;
       background: rgba(15, 30, 70, 0.6);
       border-radius: 10px;
       padding: 15px;

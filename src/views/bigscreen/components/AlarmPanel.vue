@@ -1,20 +1,24 @@
 <template>
   <div class="panel alarm-panel">
-    <dv-border-box-13>
-      <div class="panel-content">
-        <div class="panel-title">{{ $t("bigScreen.alarmPanel.title") }}</div>
-        <dv-decoration-10 style="width: 98%; height: 5px" />
-        <div ref="chart" class="chart-container"></div>
-      </div>
-    </dv-border-box-13>
+    <CommonHeader
+      :title="$t('bigScreen.alarmPanel.title')"
+      rightIcon="warring"
+    />
+    <div class="panel-content">
+      <div ref="chart" class="chart-container"></div>
+    </div>
   </div>
 </template>
 
 <script>
 import echarts from "echarts";
+import CommonHeader from "./CommonHeader.vue";
 
 export default {
   name: "AlarmPanel",
+  components: {
+    CommonHeader,
+  },
   data() {
     return {
       chart: null,
@@ -50,13 +54,63 @@ export default {
     },
     getAlarmData() {
       return [
-        { value: 2, key: "info", color: "#00f0ff" },
-        { value: 8, key: "level2", color: "#ffba00" },
-        { value: 12, key: "level3", color: "#2481e3" },
+        {
+          value: 2,
+          key: "info",
+          // 使用线性渐变色
+          color: {
+            type: "linear",
+            x: 0,
+            y: 0,
+            x2: 1,
+            y2: 1,
+            colorStops: [
+              { offset: 0, color: "#00f0ff" }, // 青色
+              { offset: 1, color: "#0055ff" }, // 深蓝
+            ],
+          },
+        },
+        {
+          value: 8,
+          key: "level2",
+          color: {
+            type: "linear",
+            x: 0,
+            y: 0,
+            x2: 1,
+            y2: 1,
+            colorStops: [
+              { offset: 0, color: "#ffba00" }, // 橙色
+              { offset: 1, color: "#ff5500" }, // 红橙
+            ],
+          },
+        },
+        {
+          value: 12,
+          key: "level3",
+          color: {
+            type: "linear",
+            x: 0,
+            y: 0,
+            x2: 1,
+            y2: 1,
+            colorStops: [
+              { offset: 0, color: "#2481e3" }, // 蓝色
+              { offset: 1, color: "#8a2be2" }, // 紫色
+            ],
+          },
+        },
       ].map((item) => ({
         value: item.value,
-        name: this.$t(`bigScreen.alarmPanel.${item.key}`),
-        itemStyle: { color: item.color },
+        name:
+          item.key === "info"
+            ? "Info"
+            : this.$t(`bigScreen.alarmPanel.${item.key}`),
+        itemStyle: {
+          color: item.color,
+          shadowBlur: 10,
+          shadowColor: "rgba(0, 0, 0, 0.5)", // 增加阴影增加立体感
+        },
       }));
     },
     getChartOptions() {
@@ -66,64 +120,77 @@ export default {
           text: data[0].name,
           subtext: "2",
           left: "center",
-          top: "42%",
+          top: "40%", // 稍微上移
           textStyle: {
             color: "#fff",
-            fontSize: 30,
+            fontSize: 28,
             fontWeight: "normal",
+            fontFamily: "Microsoft YaHei",
           },
           subtextStyle: {
-            color: "#fff",
-            fontSize: 24,
+            color: "#00f0ff", // 使用高亮色
+            fontSize: 32,
             fontWeight: "bold",
+            textShadowBlur: 10,
+            textShadowColor: "rgba(0, 240, 255, 0.5)", // 文字发光
           },
-          itemGap: 5,
+          itemGap: 10,
         },
-        tooltip: { show: true },
+        tooltip: { show: true, backgroundColor: "rgba(0,0,0,0.7)" },
         legend: { show: false },
         series: [
-          // 外围刻度装饰
+          // 最外层装饰虚线圈
           {
             type: "gauge",
-            radius: "90%",
+            radius: "80%", // 缩小
             center: ["50%", "50%"],
             startAngle: 90,
             endAngle: -269.9,
-            splitNumber: 30,
+            splitNumber: 60, // 增加刻度密度
             axisLine: { show: false },
             splitLine: { show: false },
             axisTick: {
               show: true,
-              length: 3,
-              lineStyle: { color: "rgba(255,255,255,0.2)" },
+              length: 2,
+              lineStyle: { color: "rgba(0, 245, 212, 0.3)" }, // 青色微光
             },
             axisLabel: { show: false },
             pointer: { show: false },
             detail: { show: false },
           },
-          // 外围细圆环装饰
+          // 内部装饰细环
           {
             type: "pie",
-            radius: ["82%", "82.5%"],
+            radius: ["72%", "73%"], // 缩小
             center: ["50%", "50%"],
             hoverAnimation: false,
             label: { show: false },
-            data: [{ value: 1, itemStyle: { color: "rgba(255,255,255,0.1)" } }],
+            data: [
+              {
+                value: 1,
+                itemStyle: {
+                  color: "rgba(255, 255, 255, 0.05)",
+                  borderColor: "rgba(255, 255, 255, 0.1)",
+                  borderWidth: 1,
+                },
+              },
+            ],
             z: 0,
           },
-          // 数据环
+          // 主数据环
           {
             name: this.$t("bigScreen.alarmPanel.seriesName"),
             type: "pie",
-            radius: ["60%", "75%"],
+            radius: ["55%", "68%"], // 缩小
             center: ["50%", "50%"],
             avoidLabelOverlap: true,
             label: {
               show: true,
               position: "outside",
-              formatter: "{b}",
-              color: "#fff",
+              formatter: "{b}\n{c}",
+              color: "#a0c4e8",
               fontSize: 14,
+              lineHeight: 20,
             },
             labelLine: {
               show: true,
@@ -131,22 +198,50 @@ export default {
               length2: 25,
               lineStyle: {
                 width: 1,
+                color: "rgba(255, 255, 255, 0.3)",
               },
             },
             itemStyle: {
-              borderColor: "#050b1d",
-              borderWidth: 5,
+              borderColor: "#080e2c", // 与背景色一致，产生切割感
+              borderWidth: 4,
             },
             data: data.map((item) => {
               return {
                 ...item,
                 labelLine: {
                   lineStyle: {
-                    color: item.itemStyle.color,
+                    color: "rgba(255, 255, 255, 0.3)", // 统一引导线颜色，更整洁
                   },
                 },
               };
             }),
+          },
+          // 内部发光底座（增加层次感）
+          {
+            type: "pie",
+            radius: ["0%", "45%"], // 缩小
+            center: ["50%", "50%"],
+            hoverAnimation: false,
+            label: { show: false },
+            data: [
+              {
+                value: 1,
+                itemStyle: {
+                  color: {
+                    type: "radial",
+                    x: 0.5,
+                    y: 0.5,
+                    r: 0.5,
+                    colorStops: [
+                      { offset: 0, color: "rgba(0, 240, 255, 0)" },
+                      { offset: 0.8, color: "rgba(0, 240, 255, 0.02)" },
+                      { offset: 1, color: "rgba(0, 240, 255, 0.05)" },
+                    ],
+                  },
+                },
+              },
+            ],
+            z: -1,
           },
         ],
       };
@@ -169,7 +264,9 @@ export default {
 
   position: relative;
   padding: 0;
-
+  background: rgba(8, 14, 44, 0.75);
+  border: 1px solid rgba(0, 245, 212, 0.2);
+  border-radius: 10px;
   ::v-deep .border-box-content {
     padding: 15px;
     display: flex;

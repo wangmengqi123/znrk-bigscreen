@@ -247,15 +247,13 @@ export default {
 <style lang="scss" scoped>
 .map-container {
   flex: 1.5;
-  background: rgba(13, 31, 66, 0.3);
-  border: 1px solid #1c4980;
-  position: relative;
+  min-height: 0; // 修复 flex 子元素溢出问题
   background: rgba(8, 14, 44, 0.75);
   border: 1px solid rgba(0, 245, 212, 0.2);
   border-radius: 10px;
   .chart-full {
     width: 100%;
-    height: 100%;
+    height: calc(100% - 50px);
   }
 }
 </style>

@@ -56,6 +56,9 @@ export default {
   align-items: center;
   justify-content: space-between;
   height: 50px;
+  min-height: 50px;
+  max-height: 50px;
+  flex-shrink: 0; // 防止被压缩
   background: linear-gradient(
     90deg,
     rgba(0, 20, 40, 0.8) 0%,
@@ -63,7 +66,8 @@ export default {
     rgba(0, 20, 40, 0.8) 100%
   );
   border-bottom: 2px solid rgba(0, 200, 255, 0.3);
-  padding: 0 20px;
+  padding: 0 15px;
+  box-sizing: border-box; // 确保 padding 包含在 50px 内
 
   // 左侧装饰角
   .header-left-corner {
@@ -91,38 +95,45 @@ export default {
   .header-icon-left {
     display: flex;
     align-items: center;
-    margin-right: 10px;
+    height: 100%;
 
     span {
       display: inline-block;
       width: 4px;
-      height: 32px;
+      height: 28px;
       background: linear-gradient(to bottom, #00f5d4, #9b5de5);
       border-radius: 3px;
+      flex-shrink: 0;
     }
   }
 
   // 标题
   .header-title {
     flex: 1;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bold;
     color: #00d4ff;
-    text-align: center;
+    text-align: left;
     letter-spacing: 2px;
     text-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
     margin-left: 10px;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   // 右侧图标
   .header-icon-right {
     display: flex;
     align-items: center;
+    height: 100%;
     margin-left: 10px;
+    flex-shrink: 0;
 
     .myicon {
-      width: 28px;
-      height: 28px;
+      width: 24px;
+      height: 24px;
     }
   }
 }

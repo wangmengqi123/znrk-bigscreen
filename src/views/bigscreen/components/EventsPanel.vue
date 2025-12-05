@@ -1,53 +1,70 @@
 <template>
   <div class="panel events-panel">
-    <dv-border-box-13>
-      <div class="panel-content">
-        <div class="panel-title">{{ $t("bigScreen.eventsPanel.title") }}</div>
-        <dv-decoration-10 style="width: 98%; height: 5px" />
-        <div class="events-list">
-          <div class="event-header">
-            <span>{{ $t("bigScreen.eventsPanel.headerTime") }}</span>
-            <span>{{ $t("bigScreen.eventsPanel.headerLevel") }}</span>
-            <span>{{ $t("bigScreen.eventsPanel.headerContent") }}</span>
-          </div>
-          <div class="event-body">
-            <div class="scroll-wrapper">
-              <div
-                class="event-row"
-                v-for="(item, index) in eventList"
-                :key="index"
-                :style="{ color: getRowColor(item) }"
-              >
-                <div class="col-time">
-                  <span class="date">{{ item.date }}</span>
-                  <span class="time">{{ item.time }}</span>
-                </div>
-                <span class="col-level" :class="'level-' + item.level">{{
-                  item.level
+    <CommonHeader
+      :title="$t('bigScreen.eventsPanel.title')"
+      rightIcon="things"
+    />
+    <div class="panel-content">
+      <div class="events-list">
+        <div class="event-header">
+          <span>{{ $t("bigScreen.eventsPanel.headerTime") }}</span>
+          <span>{{ $t("bigScreen.eventsPanel.headerLevel") }}</span>
+          <span>{{ $t("bigScreen.eventsPanel.headerContent") }}</span>
+        </div>
+        <div class="event-body">
+          <div class="scroll-wrapper">
+            <div
+              class="event-row"
+              v-for="(item, index) in eventList"
+              :key="index"
+              :style="{ color: getRowColor(item) }"
+            >
+              <div class="col-time">
+                <span class="date">{{ item.date }}</span>
+                <span class="time">{{ item.time }}</span>
+              </div>
+              <span class="col-level" :class="'level-' + item.level">{{
+                item.level
+              }}</span>
+              <div class="col-content">
+                <span class="content-text" :title="item.content1">{{
+                  item.content1
                 }}</span>
-                <div class="col-content">
-                  <span class="content-text" :title="item.content1">{{
-                    item.content1
-                  }}</span>
-                  <span class="content-text" :title="item.content2">{{
-                    item.content2
-                  }}</span>
-                </div>
+                <span class="content-text" :title="item.content2">{{
+                  item.content2
+                }}</span>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </dv-border-box-13>
+    </div>
   </div>
 </template>
 
 <script>
+import CommonHeader from "./CommonHeader.vue";
+
 export default {
   name: "EventsPanel",
+  components: {
+    CommonHeader,
+  },
   mounted() {
-    // 复制一份数据以实现无缝滚动
-    this.eventList = [...this.eventList, ...this.eventList];
+    // 复制多份数据以确保在高度较高的大屏上也能无缝滚动，避免底部出现空白
+    // 为了消除性能顾虑，我们限制原始数据的最大显示数量（例如只显示最新的 50 条）
+    // 这样即使后端返回大量数据，渲染的节点数也在可控范围内（50 * 4 = 200 个节点，对浏览器来说非常轻松）
+    const MAX_ITEMS = 50;
+    const originalList = this.eventList.slice(0, MAX_ITEMS);
+
+    // 原始数据 1 份，复制 3 份，共 4 份
+    // 对应 CSS 动画 translateY(-25%)，即滚动完 1 份的高度后重置
+    this.eventList = [
+      ...originalList,
+      ...originalList,
+      ...originalList,
+      ...originalList,
+    ];
   },
   methods: {
     getRowColor(item) {
@@ -127,52 +144,45 @@ export default {
   min-height: 0; // 修复 flex 子元素溢出问题
   display: flex;
   flex-direction: column;
-
   position: relative;
   padding: 0;
-
-  ::v-deep .border-box-content {
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-  }
+  background: rgba(8, 14, 44, 0.75);
+  border: 1px solid rgba(0, 245, 212, 0.2);
+  border-radius: 10px;
 
   .panel-content {
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
-  }
-
-  .panel-title {
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: #fff;
-    padding-left: 10px;
-    margin: 15px 0;
+    padding: 0 15px 15px 15px;
   }
 
   .events-list {
     flex: 1;
     display: flex;
     flex-direction: column;
-    font-size: 15px;
+    font-size: 14px;
     overflow: hidden;
-    padding: 0 10px;
 
     .event-header {
       display: flex;
-      padding: 10px 0;
-      color: #fff; // 表头文字白色
-      border-bottom: 1px solid rgba(65, 166, 255, 0.3);
-      background: rgba(36, 129, 227, 0.15); // 表头浅蓝色背景
-      border-radius: 0;
-      margin-top: 10px;
-      margin-bottom: 5px;
+      padding: 12px 10px;
+      color: #00f5d4; // 主题青色
+      border-bottom: 1px solid rgba(0, 245, 212, 0.3);
+      background: linear-gradient(
+        135deg,
+        rgba(6, 24, 70, 0.5) 0%,
+        rgba(10, 35, 90, 0.3) 100%
+      );
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-weight: 600;
 
       span {
         text-align: center;
-        font-size: 14px;
+        font-size: 13px;
+        letter-spacing: 0.5px;
       }
       span:nth-child(1) {
         flex: 1;
@@ -200,9 +210,14 @@ export default {
 
       .event-row {
         display: flex;
-        padding: 12px 0;
+        padding: 10px 8px;
         align-items: center;
-        /* color: rgba(255, 255, 255, 0.8); */
+        border-bottom: 1px solid rgba(0, 245, 212, 0.1);
+        transition: background 0.3s ease;
+
+        &:hover {
+          background: rgba(0, 245, 212, 0.05);
+        }
 
         .col-time {
           flex: 1;
@@ -211,12 +226,24 @@ export default {
           align-items: center;
           justify-content: center;
           line-height: 1.4;
+          font-size: 12px;
+
+          .date {
+            color: #a0c4e8;
+          }
+          .time {
+            color: #94f0f8;
+            font-size: 11px;
+          }
         }
 
         .col-level {
           flex: 1;
           text-align: center;
-          font-size: 15px;
+          font-size: 13px;
+          font-weight: 600;
+          padding: 2px 8px;
+          border-radius: 4px;
         }
 
         .col-content {
@@ -225,23 +252,32 @@ export default {
           flex-direction: column;
           text-align: center;
           line-height: 1.4;
+          font-size: 12px;
 
-          .content-text:last-child {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            /* color: #ff8c00; // 告警内容橙色 */
+          .content-text {
+            &:first-child {
+              color: #a0c4e8;
+              margin-bottom: 2px;
+            }
+            &:last-child {
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
           }
         }
 
         .level-L3 {
-          color: inherit;
+          color: #ff6b6b;
+          background: rgba(255, 107, 107, 0.15);
         }
         .level-L2 {
-          color: inherit;
+          color: #ffd700;
+          background: rgba(255, 215, 0, 0.15);
         }
         .level-Info {
-          color: inherit;
+          color: #92dfff;
+          background: rgba(146, 223, 255, 0.15);
         }
       }
     }
@@ -253,7 +289,7 @@ export default {
     transform: translateY(0);
   }
   100% {
-    transform: translateY(-50%);
+    transform: translateY(-25%);
   }
 }
 </style>

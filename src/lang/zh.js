@@ -1,3 +1,5 @@
+import { title } from "@/settings";
+
 export default {
   // 通用
   common: {
@@ -101,6 +103,9 @@ export default {
       headerTime: "时间",
       headerLevel: "等级",
       headerContent: "内容",
+    },
+    mapPanel: {
+      title: "储能站分布情况",
     },
   },
   // home首页

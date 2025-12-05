@@ -37,10 +37,10 @@
       <!-- 右侧栏 -->
       <div class="column right-col">
         <!-- 告警统计 -->
-        <!-- <alarm-panel /> -->
+        <alarm-panel />
 
         <!-- 实时事件 -->
-        <!-- <events-panel /> -->
+        <events-panel />
       </div>
     </div>
   </div>
@@ -66,10 +66,20 @@ export default {
   data() {
     return {
       time: "",
+      timer: null,
     };
   },
   mounted() {
     this.getTime();
+    this.timer = setInterval(() => {
+      this.getTime();
+    }, 1000);
+  },
+  beforeDestroy() {
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
   },
   methods: {
     getTime() {
@@ -88,6 +98,7 @@ export default {
   width: 100vw;
   height: 100vh;
   padding: 20px;
+  padding-bottom: 0;
   /* 网格背景 */
   background-image: linear-gradient(rgba(0, 245, 212, 0.1) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 245, 212, 0.1) 1px, transparent 1px);
@@ -148,7 +159,7 @@ export default {
       box-shadow: 0 0 20px #00f5d4;
       position: relative;
       overflow: hidden;
-      z-index: 1;
+      z-index: 10;
       font-family: "Orbitron", sans-serif;
       letter-spacing: 1px;
     }

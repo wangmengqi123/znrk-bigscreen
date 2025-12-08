@@ -50,7 +50,6 @@
   </div>
 </template>
 <script>
-import ScaleBox from "@/components/ScaleBox";
 import ScalePanel from "./components/ScalePanel";
 import AnalysisPanel from "./components/AnalysisPanel";
 import MapPanel from "./components/MapPanel";
@@ -61,7 +60,6 @@ import { getStationData } from "@/api/bigscreen";
 export default {
   name: "BigScreen",
   components: {
-    ScaleBox,
     ScalePanel,
     AnalysisPanel,
     MapPanel,

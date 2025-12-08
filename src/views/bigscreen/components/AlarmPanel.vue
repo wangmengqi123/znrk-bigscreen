@@ -22,6 +22,7 @@ export default {
   data() {
     return {
       chart: null,
+      resizeTimer: null,
     };
   },
   watch: {
@@ -36,6 +37,9 @@ export default {
     });
   },
   beforeDestroy() {
+    if (this.resizeTimer) {
+      clearTimeout(this.resizeTimer);
+    }
     window.removeEventListener("resize", this.handleResize);
     if (this.chart) {
       this.chart.dispose();
@@ -44,9 +48,18 @@ export default {
   },
   methods: {
     handleResize() {
-      if (this.chart) {
-        this.chart.resize();
+      if (this.resizeTimer) {
+        clearTimeout(this.resizeTimer);
       }
+      this.resizeTimer = setTimeout(() => {
+        if (this.chart) {
+          requestAnimationFrame(() => {
+            if (this.chart && !this.chart.isDisposed()) {
+              this.chart.resize();
+            }
+          });
+        }
+      }, 200);
     },
     initChart() {
       this.chart = echarts.init(this.$refs.chart);

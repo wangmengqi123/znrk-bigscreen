@@ -24,11 +24,27 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  publicPath: "/",
+  publicPath: process.env.IS_ELECTRON ? "./" : "/",
   outputDir: "dist",
   assetsDir: "static",
   lintOnSave: process.env.NODE_ENV === "development",
   productionSourceMap: false,
+  pluginOptions: {
+    electronBuilder: {
+      builderOptions: {
+        appId: "com.znrk.bigscreen",
+        productName: "储能站监控大屏",
+        win: {
+          icon: "public/favicon.ico",
+          target: ["nsis"],
+        },
+        nsis: {
+          oneClick: false,
+          allowToChangeInstallationDirectory: true,
+        },
+      },
+    },
+  },
   devServer: {
     port: port,
     overlay: {

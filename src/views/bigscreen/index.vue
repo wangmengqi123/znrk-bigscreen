@@ -1,51 +1,56 @@
 <template>
   <div class="bigscreen-container">
-    <div class="bigscreen-header">
-      <div class="time">{{ time }}</div>
-      <div class="project-name">{{ $t("common.projectName") }}</div>
-      <div class="enter-admin-btn">
-        <el-button
-          icon="el-icon-setting"
-          class="enter-admin-btn"
-          @click="$router.push('/home')"
-          >{{ $t("bigScreen.enterAdmin") }}</el-button
-        >
+    <scale-box>
+      <div class="bigscreen-content">
+        <div class="bigscreen-header">
+          <div class="time">{{ time }}</div>
+          <div class="project-name">{{ $t("common.projectName") }}</div>
+          <div class="enter-admin-btn">
+            <el-button
+              icon="el-icon-setting"
+              class="enter-admin-btn"
+              @click="$router.push('/home')"
+              >{{ $t("bigScreen.enterAdmin") }}</el-button
+            >
+          </div>
+        </div>
+
+        <div class="main-content">
+          <!-- 浮动按钮 -->
+
+          <!-- 左侧栏 -->
+          <div class="column left-col">
+            <!-- 储能站规模 -->
+            <scale-panel />
+
+            <!-- 运营分析 -->
+            <analysis-panel />
+          </div>
+
+          <!-- 中间栏 -->
+          <div class="column center-col">
+            <!-- 地图区域 -->
+            <map-panel />
+
+            <!-- 电量分析 -->
+            <electricity-panel />
+          </div>
+
+          <!-- 右侧栏 -->
+          <div class="column right-col">
+            <!-- 告警统计 -->
+            <alarm-panel />
+
+            <!-- 实时事件 -->
+            <events-panel />
+          </div>
+        </div>
       </div>
-    </div>
-
-    <div class="main-content">
-      <!-- 浮动按钮 -->
-
-      <!-- 左侧栏 -->
-      <div class="column left-col">
-        <!-- 储能站规模 -->
-        <scale-panel />
-
-        <!-- 运营分析 -->
-        <analysis-panel />
-      </div>
-
-      <!-- 中间栏 -->
-      <div class="column center-col">
-        <!-- 地图区域 -->
-        <map-panel />
-
-        <!-- 电量分析 -->
-        <electricity-panel />
-      </div>
-
-      <!-- 右侧栏 -->
-      <div class="column right-col">
-        <!-- 告警统计 -->
-        <alarm-panel />
-
-        <!-- 实时事件 -->
-        <events-panel />
-      </div>
-    </div>
+    </scale-box>
   </div>
 </template>
 <script>
+import ScaleBox from "@/components/ScaleBox";
 import ScalePanel from "./components/ScalePanel";
 import AnalysisPanel from "./components/AnalysisPanel";
 import MapPanel from "./components/MapPanel";
@@ -56,6 +61,7 @@ import { getStationData } from "@/api/bigscreen";
 export default {
   name: "BigScreen",
   components: {
+    ScaleBox,
     ScalePanel,
     AnalysisPanel,
     MapPanel,
@@ -97,12 +103,25 @@ export default {
   user-select: none;
   width: 100vw;
   height: 100vh;
-  padding: 20px;
-  padding-bottom: 0;
-  /* 网格背景 */
-  background-image: linear-gradient(rgba(0, 245, 212, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 245, 212, 0.1) 1px, transparent 1px);
-  background-size: 30px 30px;
+  // padding: 20px; // Padding moved to inner content or handled by layout
+  // padding-bottom: 0;
+
+  .bigscreen-content {
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    padding-bottom: 0;
+    /* 网格背景 */
+    background-image: linear-gradient(
+        rgba(0, 245, 212, 0.1) 1px,
+        transparent 1px
+      ),
+      linear-gradient(90deg, rgba(0, 245, 212, 0.1) 1px, transparent 1px);
+    background-size: 30px 30px;
+    display: flex;
+    flex-direction: column;
+  }
+
   .bigscreen-header {
     height: 80px;
     display: flex;
@@ -116,6 +135,7 @@ export default {
     z-index: 10;
     border: 1px solid rgba(0, 245, 212, 0.2);
     box-shadow: 0 0 20px rgba(0, 245, 212, 0.1);
+    flex-shrink: 0; // 防止头部被压缩
     .time {
       flex: 1;
       font-size: 1.3rem;
@@ -219,8 +239,9 @@ export default {
   }
   .main-content {
     display: flex;
-    height: calc(100% - 100px);
+    flex: 1; // 占满剩余空间
     gap: 20px; // 增加整体列间距
+    min-height: 0; // 防止flex子项溢出
     .column {
       display: flex;
       flex-direction: column;
